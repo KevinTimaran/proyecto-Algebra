@@ -1,4 +1,5 @@
 from tkinter import Label, Button, Frame, Tk, font
+from interfaz_operaciones_combinadas import InterfazOperacionesCombinadas
 
 class CalculadoraAlgebra(Frame):
     def __init__(self, master=None):
@@ -9,9 +10,9 @@ class CalculadoraAlgebra(Frame):
         
     def configurar_ventana(self):
         self.master.title("Calculadora de Álgebra Lineal")
-        self.master.geometry("1000x700")
+        self.master.geometry("1500x800")
         self.master.minsize(800, 600)
-        self.master.resizable(True, True)
+        self.master.resizable(False, False)
         self.master.configure(bg='white')
 
         self.master.grid_rowconfigure(0, weight=1)
@@ -62,7 +63,7 @@ class CalculadoraAlgebra(Frame):
             ("Restar Matrices", self.mostrar_placeholder),
             ("Multiplicar Matrices", self.mostrar_placeholder),
             ("Inversa de Matriz", self.mostrar_placeholder),
-            ("Operaciones Combinadas", self.mostrar_placeholder),
+            ("Operaciones Combinadas", self.mostrar_operaciones_combinadas),
             ("Vectores", self.mostrar_placeholder)
         ]
 
@@ -142,6 +143,14 @@ class CalculadoraAlgebra(Frame):
     def limpiar_area_principal(self):
         for widget in self.area_principal.winfo_children():
             widget.destroy()
+
+    #----------------------------------------------
+    # Métodos para mostrar otras operaciones
+    #----------------------------------------------
+    def mostrar_operaciones_combinadas(self):
+        self.limpiar_area_principal()
+        InterfazOperacionesCombinadas(self.area_principal)
+
 
 if __name__ == "__main__":
     root = Tk()
