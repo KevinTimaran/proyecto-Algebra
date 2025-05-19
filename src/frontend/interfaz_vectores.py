@@ -92,3 +92,36 @@ def interfaz_vectores(parent, colores, fuentes):
     # - Más botones (producto punto, magnitud, ángulo)
     # - Funciones internas para validar y operar con los vectores
     # - Labels dinámicos para mostrar resultados
+
+# ======================================
+# 🔧 Bloque de prueba para ejecutarlo solo
+# ======================================
+if __name__ == "__main__":
+    from tkinter import Tk
+
+    # Diccionario de colores y fuentes simuladas para pruebas independientes
+    colores = {
+        'fondo_principal': "#edf2f4",
+        'fondo_lateral': "#2b2d42",
+        'titulo': "#ef233c",
+        'boton_normal': "#8d99ae",
+        'boton_hover': "#6c757d",
+        'texto_boton': "white"
+    }
+
+    fuentes = {
+        'titulo': ("Arial", 16, "bold"),
+        'subtitulo': ("Arial", 12),
+        'botones': ("Arial", 11)
+    }
+
+    # Crear ventana raíz solo para pruebas locales
+    root = Tk()
+    root.title("Prueba independiente: Vectores")
+    root.geometry("600x500")
+    root.configure(bg=colores['fondo_principal'])
+
+    # Llamar la interfaz como si fuera parte de la app
+    interfaz_vectores(root, colores, fuentes)
+
+    root.mainloop()
