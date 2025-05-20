@@ -1,6 +1,9 @@
 from tkinter import Label, Button, Frame, Tk, font
 from interfaz_operaciones_combinadas import interfazOperacionesCombinadas
 from interfaz_resta import interfaz_resta
+from interfaz_inversa import interfaz_inversa
+from interfaz_sumas import interfaz_suma
+
 
 class CalculadoraAlgebra(Frame):
     def __init__(self, master=None):
@@ -60,10 +63,10 @@ class CalculadoraAlgebra(Frame):
         lbl_titulo.grid(row=0, column=0, pady=30, padx=10)
 
         botones = [
-            ("Sumar Matrices", self.mostrar_suma),
-            ("Restar Matrices", self.mostrar_interfaz_resta),
+            ("Sumar Matrices", self.mostrar_operaciones_suma),
+            ("Restar Matrices", self.mostrar_operaciones_resta),
             ("Multiplicar Matrices", self.mostrar_placeholder),
-            ("Inversa de Matriz", self.mostrar_placeholder),
+            ("Inversa de Matriz", self.mostrar_operaciones_inversa),
             ("Operaciones Combinadas", self.mostrar_operaciones_combinadas),
             ("Vectores", self.mostrar_placeholder)
         ]
@@ -152,9 +155,18 @@ class CalculadoraAlgebra(Frame):
         self.limpiar_area_principal()
         interfazOperacionesCombinadas(self.area_principal, self.colores, self.fuentes)
  
-    def mostrar_interfaz_resta(self):
+    def mostrar_operaciones_resta(self):
         self.limpiar_area_principal()
         interfaz_resta(self.area_principal, self.colores, self.fuentes)
+
+    def mostrar_operaciones_inversa(self):
+        self.limpiar_area_principal()
+        interfaz_inversa(self.area_principal, self.colores, self.fuentes)
+
+    def mostrar_operaciones_suma(self):
+        self.limpiar_area_principal()
+        interfaz_suma(self.area_principal, self.colores, self.fuentes)
+
 
  
 
