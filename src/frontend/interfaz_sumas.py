@@ -1,6 +1,8 @@
 # src/frontend/interfaz_suma.py
 
-from tkinter import Frame, Label
+import tkinter as tk
+from tkinter import Frame, Label, Entry, Button, messagebox
+from sumarMatrices import crear_matriz, sumar_matrices
 
 def interfaz_suma(parent, colores, fuentes):
     """
