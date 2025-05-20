@@ -1,5 +1,5 @@
 from tkinter import Label, Button, Frame, Tk, font
-from interfaz_operaciones_combinadas import InterfazOperacionesCombinadas
+from interfaz_operaciones_combinadas import interfazOperacionesCombinadas
 
 class CalculadoraAlgebra(Frame):
     def __init__(self, master=None):
@@ -149,7 +149,8 @@ class CalculadoraAlgebra(Frame):
     #----------------------------------------------
     def mostrar_operaciones_combinadas(self):
         self.limpiar_area_principal()
-        InterfazOperacionesCombinadas(self.area_principal)
+        interfazOperacionesCombinadas(self.area_principal, self.colores, self.fuentes)
+
 
 
 if __name__ == "__main__":

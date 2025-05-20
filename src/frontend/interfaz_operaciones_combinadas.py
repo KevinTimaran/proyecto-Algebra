@@ -1,179 +1,147 @@
 # src/frontend/interfaz_operaciones_combinadas.py
+
 import tkinter as tk
 from tkinter import ttk, messagebox
-import sys
-import os
+import os, sys
 
-# Añadir la carpeta raíz del proyecto al path
+# ===== Agrega el path para importar backend si es necesario =====
 current_dir = os.path.dirname(os.path.abspath(__file__))
-project_root_src_dir = os.path.dirname(current_dir)  # sube de frontend a src
+root_src_dir = os.path.dirname(current_dir)
 
-if project_root_src_dir not in sys.path:
-    sys.path.insert(0, project_root_src_dir)
+if root_src_dir not in sys.path:
+    sys.path.insert(0, root_src_dir)
 
-
-# Intenta importar las funciones necesarias del backend.
+# ===== Intenta importar desde el backend =====
 try:
     from backend.matricesOperacionesCombinadas import operacion_combinada, es_matriz_valida
-except ImportError as e_interno:
-    print(f"DEBUG: Error AL IMPORTAR DENTRO DE interfaz_operaciones_combinadas.py: {e_interno}")
-    print("DEBUG: Asegúrate que 'src/backend/matricesOperacionesCombinadas.py' existe y no tiene errores.")
-    print("DEBUG: Y que 'src/backend/__init__.py' existe.")
-    def operacion_combinada(alpha, A, beta, B):
-        messagebox.showerror("Error Crítico de Importación", "No se pudo cargar la lógica del backend (operacion_combinada).")
+except ImportError as e:
+    print("⚠️ Error de importación:", e)
+    def operacion_combinada(*args, **kwargs):
+        messagebox.showerror("Error", "No se pudo importar la función operacion_combinada.")
         return None
-    def es_matriz_valida(matriz):
-        return False, "Error crítico: no se pudo cargar la lógica del backend (es_matriz_valida)."
+    def es_matriz_valida(_):
+        return False, "Error: No se pudo validar la matriz."
 
-class InterfazOperacionesCombinadas(ttk.Frame): 
-    def __init__(self, master): 
-        super().__init__(master, padding="10 10 10 10")
-        self.master = master 
-        self.pack(fill=tk.BOTH, expand=True) 
+# ===== INTERFAZ COMPATIBLE CON ESTILO GLOBAL DE LA APP PRINCIPAL =====
+def interfazOperacionesCombinadas(parent, colores, fuentes):
+    """
+    Módulo gráfico reutilizable para la operación combinada αA + βB
+    Parámetros:
+    - parent: frame contenedor (área principal)
+    - colores: diccionario de colores compartido
+    - fuentes: diccionario de fuentes compartido
+    """
+    # 🧱 Contenedor base
+    frame = tk.Frame(parent, bg=colores['fondo_principal'])
+    frame.pack(fill="both", expand=True, padx=20, pady=20)
 
-        style = ttk.Style(self) 
-        style.configure("TLabel", padding=5, font=('Arial', 10))
-        style.configure("TEntry", padding=5, font=('Arial', 10))
-        style.configure("TButton", padding=5, font=('Arial', 10))
-        style.configure("Resultado.TLabel", font=('Arial', 10, 'bold'))
-        
-        ttk.Label(self, text="Operación Combinada αA + βB", font=('Arial', 14, 'bold')).grid(row=0, column=0, columnspan=2, pady=(0,10))
+    # 🏷️ Título
+    tk.Label(frame, text="Operación Combinada αA + βB",
+             bg=colores['fondo_principal'], fg=colores['titulo'],
+             font=fuentes['titulo']).pack(pady=(0, 20))
 
-        # --- Etiqueta Modificada ---
-        ttk.Label(self, text="Matriz A (filas con ; elementos con , o espacio):").grid(row=1, column=0, sticky=tk.W, padx=5, pady=5)
-        self.entry_A_str = ttk.Entry(self, width=40)
-        self.entry_A_str.grid(row=1, column=1, padx=5, pady=5, sticky=tk.EW)
-        self.entry_A_str.insert(0, "1,2;3,4") 
+    # 🧮 Instrucciones
+    tk.Label(frame, text="Ingresa dos matrices (usando ; para filas y , o espacio para columnas)",
+             bg=colores['fondo_principal'], fg="#495057",
+             font=fuentes['subtitulo']).pack(pady=(0, 15))
 
-        ttk.Label(self, text="Escalar α:").grid(row=2, column=0, sticky=tk.W, padx=5, pady=5)
-        self.entry_alpha_str = ttk.Entry(self, width=10)
-        self.entry_alpha_str.grid(row=2, column=1, sticky=tk.W, padx=5, pady=5)
-        self.entry_alpha_str.insert(0, "1") 
+    # 📥 Entradas
+    def etiqueta(texto):
+        return tk.Label(frame, text=texto, bg=colores['fondo_principal'],
+                        fg="#212529", font=fuentes['botones'])
 
-        # --- Etiqueta Modificada para Matriz B también (para consistencia) ---
-        ttk.Label(self, text="Matriz B (filas con ; elementos con , o espacio):").grid(row=3, column=0, sticky=tk.W, padx=5, pady=5)
-        self.entry_B_str = ttk.Entry(self, width=40)
-        self.entry_B_str.grid(row=3, column=1, padx=5, pady=5, sticky=tk.EW)
-        self.entry_B_str.insert(0, "5,6;7,8") 
+    etiqueta("Matriz A:").pack(anchor="w", padx=5)
+    entry_A = tk.Entry(frame, width=50)
+    entry_A.insert(0, "1,2;3,4")
+    entry_A.pack(pady=(0, 10))
 
-        ttk.Label(self, text="Escalar β:").grid(row=4, column=0, sticky=tk.W, padx=5, pady=5)
-        self.entry_beta_str = ttk.Entry(self, width=10)
-        self.entry_beta_str.grid(row=4, column=1, sticky=tk.W, padx=5, pady=5)
-        self.entry_beta_str.insert(0, "1") 
+    etiqueta("Escalar α:").pack(anchor="w", padx=5)
+    entry_alpha = tk.Entry(frame, width=10)
+    entry_alpha.insert(0, "1")
+    entry_alpha.pack(pady=(0, 10))
 
-        self.calculate_button = ttk.Button(self, text="Calcular αA + βB", command=self.calcular)
-        self.calculate_button.grid(row=5, column=0, columnspan=2, pady=10)
+    etiqueta("Matriz B:").pack(anchor="w", padx=5)
+    entry_B = tk.Entry(frame, width=50)
+    entry_B.insert(0, "5,6;7,8")
+    entry_B.pack(pady=(0, 10))
 
-        ttk.Label(self, text="Resultado:").grid(row=6, column=0, sticky=tk.W, padx=5, pady=5)
-        self.result_text = tk.StringVar()
-        self.result_label = ttk.Label(self, textvariable=self.result_text, style="Resultado.TLabel", wraplength=550)
-        self.result_label.grid(row=7, column=0, columnspan=2, sticky=tk.W, padx=5, pady=5)
-        
-        self.columnconfigure(1, weight=1)
+    etiqueta("Escalar β:").pack(anchor="w", padx=5)
+    entry_beta = tk.Entry(frame, width=10)
+    entry_beta.insert(0, "1")
+    entry_beta.pack(pady=(0, 20))
 
-    def parse_matrix_string(self, matrix_str):
-        matriz = []
-        if not matrix_str.strip():
-            return [], "La cadena de la matriz está vacía."
-        
-        filas_str = matrix_str.split(';')
-        num_cols = -1
+    # 📤 Resultado
+    resultado_var = tk.StringVar()
+    resultado_label = tk.Label(frame, textvariable=resultado_var,
+                               bg=colores['fondo_principal'], fg="#000",
+                               font=fuentes['botones'], justify="left", anchor="w")
+    resultado_label.pack(pady=(10, 5), anchor="w")
 
-        for i, fila_str_raw in enumerate(filas_str):
-            fila_str = fila_str_raw.strip()
-            elementos_str = fila_str.replace(',', ' ').split()
-            
-            if not elementos_str and not fila_str: 
-                if len(filas_str) == 1: 
-                     return None, "La cadena de la matriz está vacía o es inválida."
-                matriz.append([]) 
-                if i == 0: num_cols = 0
-                elif num_cols != 0 : 
-                    return None, f"Error: Fila {i+1} está vacía pero filas anteriores no lo estaban."
-                continue
-            elif not elementos_str and fila_str: 
-                return None, f"Error: Fila {i+1} contiene solo espacios o caracteres no numéricos."
-
-            fila_actual = []
-            try:
-                for elem_str in elementos_str:
-                    fila_actual.append(float(elem_str)) 
-            except ValueError:
-                return None, f"Error: Elemento no numérico '{elem_str}' en la fila {i+1}."
-            
-            if i == 0:
-                num_cols = len(fila_actual)
-            elif len(fila_actual) != num_cols :
-                 return None, f"Error: Fila {i+1} tiene {len(fila_actual)} columnas, se esperaban {num_cols}."
-            
-            matriz.append(fila_actual)
-        
-        es_valida, mensaje_val = es_matriz_valida(matriz) 
-        if not es_valida:
-            return None, f"Error de validación interna: {mensaje_val}"
-            
-        return matriz, None
-
-    def parse_scalar_string(self, scalar_str):
+    # 🧠 Funciones internas
+    def parsear_matriz(cadena):
         try:
-            return float(scalar_str)
+            matriz = []
+            filas = cadena.strip().split(';')
+            num_columnas = -1
+            for fila_raw in filas:
+                fila_str = fila_raw.strip().replace(',', ' ')
+                elementos = [float(x) for x in fila_str.split()]
+                if num_columnas == -1:
+                    num_columnas = len(elementos)
+                elif len(elementos) != num_columnas:
+                    return None, "Filas con diferentes columnas."
+                matriz.append(elementos)
+            valida, msg = es_matriz_valida(matriz)
+            if not valida: return None, msg
+            return matriz, None
         except ValueError:
-            return None
+            return None, "Hay valores no numéricos."
 
-    def calcular(self):
-        A_str = self.entry_A_str.get()
-        B_str = self.entry_B_str.get()
-        alpha_str = self.entry_alpha_str.get()
-        beta_str = self.entry_beta_str.get()
+    def parsear_escalar(txt):
+        try: return float(txt)
+        except ValueError: return None
 
-        A, error_A = self.parse_matrix_string(A_str)
-        if error_A:
-            messagebox.showerror("Error en Matriz A", error_A)
-            self.result_text.set(f"Error en A: {error_A}")
+    def calcular():
+        A, errA = parsear_matriz(entry_A.get())
+        B, errB = parsear_matriz(entry_B.get())
+        alpha = parsear_escalar(entry_alpha.get())
+        beta = parsear_escalar(entry_beta.get())
+
+        if errA:
+            messagebox.showerror("Error en A", errA)
+            resultado_var.set(errA)
             return
-
-        B, error_B = self.parse_matrix_string(B_str)
-        if error_B:
-            messagebox.showerror("Error en Matriz B", error_B)
-            self.result_text.set(f"Error en B: {error_B}")
+        if errB:
+            messagebox.showerror("Error en B", errB)
+            resultado_var.set(errB)
             return
-
-        alpha = self.parse_scalar_string(alpha_str)
         if alpha is None:
-            messagebox.showerror("Error en Escalar α", "El escalar α debe ser un número.")
-            self.result_text.set("Error: α debe ser numérico.")
+            messagebox.showerror("Escalar α inválido", "Debe ser numérico.")
             return
-
-        beta = self.parse_scalar_string(beta_str)
         if beta is None:
-            messagebox.showerror("Error en Escalar β", "El escalar β debe ser un número.")
-            self.result_text.set("Error: β debe ser numérico.")
+            messagebox.showerror("Escalar β inválido", "Debe ser numérico.")
             return
 
-        resultado_matriz = operacion_combinada(alpha, A, beta, B)
+        resultado = operacion_combinada(alpha, A, beta, B)
+        if resultado is None:
+            resultado_var.set("Error durante el cálculo.")
+            return
 
-        if resultado_matriz is not None:
-            if not resultado_matriz: 
-                resultado_str = "Matriz vacía []"
-            elif not resultado_matriz[0] and len(resultado_matriz) == 1: 
-                resultado_str = "Matriz [[]]"
-            else:
-                resultado_str = "\n".join(["  ".join(map(str, fila)) for fila in resultado_matriz])
-            self.result_text.set(resultado_str)
+        # Formatear salida
+        if not resultado:
+            resultado_var.set("Resultado vacío.")
         else:
-            self.result_text.set("Error durante el cálculo. Verifique la consola y los datos de entrada.")
+            resultado_formateado = "\n".join(
+                ["  ".join(f"{num:.2f}" for num in fila) for fila in resultado]
+            )
+            resultado_var.set(f"Resultado:\n{resultado_formateado}")
 
-if __name__ == '__main__':
-    import sys
-    import os
-    current_dir = os.path.dirname(os.path.abspath(__file__)) 
-    project_root_src_dir = os.path.dirname(current_dir) 
-    
-    if project_root_src_dir not in sys.path:
-       sys.path.insert(0, project_root_src_dir)
-    
-    root_test = tk.Tk()
-    root_test.title("Test Interfaz Operaciones Combinadas")
-    root_test.geometry("600x500")
-    app_test = InterfazOperacionesCombinadas(root_test)
-    root_test.mainloop()
+    # 🚀 Botón
+    tk.Button(frame, text="Calcular αA + βB",
+              bg=colores['boton_normal'], fg=colores['texto_boton'],
+              font=fuentes['botones'], relief="flat",
+              activebackground=colores['boton_hover'],
+              cursor="hand2",
+              command=calcular).pack(pady=10)
+
+    return frame  # Retornamos el frame si se desea manipular más tarde
