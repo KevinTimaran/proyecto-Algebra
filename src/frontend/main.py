@@ -3,7 +3,8 @@ from interfaz_operaciones_combinadas import interfazOperacionesCombinadas
 from interfaz_resta import interfaz_resta
 from interfaz_inversa import interfaz_inversa
 from interfaz_sumas import interfaz_suma
-
+from interfaz_vectores import interfaz_vectores
+from interfaz_multiplicacion import interfaz_multiplicacion
 
 class CalculadoraAlgebra(Frame):
     def __init__(self, master=None):
@@ -65,10 +66,10 @@ class CalculadoraAlgebra(Frame):
         botones = [
             ("Sumar Matrices", self.mostrar_operaciones_suma),
             ("Restar Matrices", self.mostrar_operaciones_resta),
-            ("Multiplicar Matrices", self.mostrar_placeholder),
+            ("Multiplicar Matrices", self.mostrar_multiplicacion),
             ("Inversa de Matriz", self.mostrar_operaciones_inversa),
             ("Operaciones Combinadas", self.mostrar_operaciones_combinadas),
-            ("Vectores", self.mostrar_placeholder)
+            ("Vectores", self.mostrar_vectores)
         ]
 
         for i, (texto, comando) in enumerate(botones):
@@ -167,8 +168,13 @@ class CalculadoraAlgebra(Frame):
         self.limpiar_area_principal()
         interfaz_suma(self.area_principal, self.colores, self.fuentes)
 
+    def mostrar_vectores(self):
+        self.limpiar_area_principal()
+        interfaz_vectores(self.area_principal, self.colores, self.fuentes)
 
- 
+    def mostrar_multiplicacion(self):
+        self.limpiar_area_principal()
+        interfaz_multiplicacion(self.area_principal, self.colores, self.fuentes)
 
 
 if __name__ == "__main__":

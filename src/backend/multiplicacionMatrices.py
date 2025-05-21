@@ -2,23 +2,16 @@
 # Módulo para multiplicar matrices A x B con validación de dimensiones
 
 def es_matriz_valida(matriz):
-    """
-    Verifica que una matriz sea válida:
-    - No vacía
-    - Todas las filas del mismo largo
-    - Todos los elementos son números
-    """
     if not matriz or not isinstance(matriz, list):
         return False, "Error: La matriz no puede estar vacía."
 
     columnas = len(matriz[0])
     for fila in matriz:
         if len(fila) != columnas:
-            return False, "Error: Las filas de la matriz deben tener la misma longitud."
+            return False, "Error: Las filas deben tener la misma longitud."
         for valor in fila:
-            if not isinstance(valor, (int, float)):
+            if not isinstance(valor, (int, float)):  # ⚠️ Aquí clave
                 return False, "Error: Todos los elementos deben ser números reales."
-
     return True, ""
 
 
