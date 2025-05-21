@@ -509,8 +509,9 @@ def interfaz_vectores(parent, colores, fuentes):
         ).pack()
 
 
-    #Devolver el frame si se requiere manipular desde afuera
+    # Devolver el frame si se requiere manipular desde afuera
     return frame
+
 
 # === Bloque de prueba ===
 if __name__ == "__main__":
