@@ -1,147 +1,114 @@
-# src/frontend/interfaz_operaciones_combinadas.py
-
 import tkinter as tk
-from tkinter import ttk, messagebox
-import os, sys
+from tkinter import messagebox, ttk
 
-# ===== Agrega el path para importar backend si es necesario =====
-current_dir = os.path.dirname(os.path.abspath(__file__))
-root_src_dir = os.path.dirname(current_dir)
-
-if root_src_dir not in sys.path:
-    sys.path.insert(0, root_src_dir)
-
-# ===== Intenta importar desde el backend =====
-try:
-    from backend.matricesOperacionesCombinadas import operacion_combinada, es_matriz_valida
-except ImportError as e:
-    print("⚠️ Error de importación:", e)
-    def operacion_combinada(*args, **kwargs):
-        messagebox.showerror("Error", "No se pudo importar la función operacion_combinada.")
-        return None
-    def es_matriz_valida(_):
-        return False, "Error: No se pudo validar la matriz."
-
-# ===== INTERFAZ COMPATIBLE CON ESTILO GLOBAL DE LA APP PRINCIPAL =====
-def interfazOperacionesCombinadas(parent, colores, fuentes):
-    """
-    Módulo gráfico reutilizable para la operación combinada αA + βB
-    Parámetros:
-    - parent: frame contenedor (área principal)
-    - colores: diccionario de colores compartido
-    - fuentes: diccionario de fuentes compartido
-    """
-    # 🧱 Contenedor base
+def interfaz_operaciones_combinadas(parent, colores, fuentes):
     frame = tk.Frame(parent, bg=colores['fondo_principal'])
     frame.pack(fill="both", expand=True, padx=20, pady=20)
 
-    # 🏷️ Título
-    tk.Label(frame, text="Operación Combinada αA + βB",
+    tk.Label(frame, text="Operación con Matrices",
              bg=colores['fondo_principal'], fg=colores['titulo'],
              font=fuentes['titulo']).pack(pady=(0, 20))
 
-    # 🧮 Instrucciones
-    tk.Label(frame, text="Ingresa dos matrices (usando ; para filas y , o espacio para columnas)",
-             bg=colores['fondo_principal'], fg="#495057",
-             font=fuentes['subtitulo']).pack(pady=(0, 15))
+    modo_var = tk.StringVar(value="Combinada (αA + βB)")
+    selector = ttk.Combobox(frame, textvariable=modo_var, values=["Combinada (αA + βB)", "Escalar (αA)"],
+                            state="readonly", font=fuentes['botones'], width=30)
+    selector.pack(pady=(0, 10))
 
-    # 📥 Entradas
-    def etiqueta(texto):
-        return tk.Label(frame, text=texto, bg=colores['fondo_principal'],
-                        fg="#212529", font=fuentes['botones'])
+    subtitulo = tk.Label(frame, text="Selecciona el tipo de operación",
+                         bg=colores['fondo_principal'], fg="#495057",
+                         font=fuentes['subtitulo'])
+    subtitulo.pack(pady=(0, 10))
 
-    etiqueta("Matriz A:").pack(anchor="w", padx=5)
-    entry_A = tk.Entry(frame, width=50)
-    entry_A.insert(0, "1,2;3,4")
-    entry_A.pack(pady=(0, 10))
+    entradas_frame = tk.Frame(frame, bg=colores['fondo_principal'])
+    entradas_frame.pack(pady=10)
 
-    etiqueta("Escalar α:").pack(anchor="w", padx=5)
-    entry_alpha = tk.Entry(frame, width=10)
-    entry_alpha.insert(0, "1")
-    entry_alpha.pack(pady=(0, 10))
-
-    etiqueta("Matriz B:").pack(anchor="w", padx=5)
-    entry_B = tk.Entry(frame, width=50)
-    entry_B.insert(0, "5,6;7,8")
-    entry_B.pack(pady=(0, 10))
-
-    etiqueta("Escalar β:").pack(anchor="w", padx=5)
-    entry_beta = tk.Entry(frame, width=10)
-    entry_beta.insert(0, "1")
-    entry_beta.pack(pady=(0, 20))
-
-    # 📤 Resultado
     resultado_var = tk.StringVar()
-    resultado_label = tk.Label(frame, textvariable=resultado_var,
-                               bg=colores['fondo_principal'], fg="#000",
-                               font=fuentes['botones'], justify="left", anchor="w")
-    resultado_label.pack(pady=(10, 5), anchor="w")
+    tk.Label(frame, textvariable=resultado_var, bg=colores['fondo_principal'],
+             fg="#000", font=fuentes['botones'], justify="left").pack(pady=10)
 
-    # 🧠 Funciones internas
-    def parsear_matriz(cadena):
-        try:
-            matriz = []
-            filas = cadena.strip().split(';')
-            num_columnas = -1
-            for fila_raw in filas:
-                fila_str = fila_raw.strip().replace(',', ' ')
-                elementos = [float(x) for x in fila_str.split()]
-                if num_columnas == -1:
-                    num_columnas = len(elementos)
-                elif len(elementos) != num_columnas:
-                    return None, "Filas con diferentes columnas."
-                matriz.append(elementos)
-            valida, msg = es_matriz_valida(matriz)
-            if not valida: return None, msg
-            return matriz, None
-        except ValueError:
-            return None, "Hay valores no numéricos."
+    def limpiar_entradas():
+        for widget in entradas_frame.winfo_children():
+            widget.destroy()
 
-    def parsear_escalar(txt):
-        try: return float(txt)
-        except ValueError: return None
+    def construir_formulario():
+        limpiar_entradas()
+        modo = modo_var.get()
 
-    def calcular():
-        A, errA = parsear_matriz(entry_A.get())
-        B, errB = parsear_matriz(entry_B.get())
-        alpha = parsear_escalar(entry_alpha.get())
-        beta = parsear_escalar(entry_beta.get())
+        tk.Label(entradas_frame, text="Matriz A:", bg=colores['fondo_principal'], font=fuentes['botones']).grid(row=0, column=0, sticky="w")
+        entry_A = tk.Entry(entradas_frame, width=40)
+        entry_A.insert(0, "1,2;3,4")
+        entry_A.grid(row=0, column=1)
 
-        if errA:
-            messagebox.showerror("Error en A", errA)
-            resultado_var.set(errA)
-            return
-        if errB:
-            messagebox.showerror("Error en B", errB)
-            resultado_var.set(errB)
-            return
-        if alpha is None:
-            messagebox.showerror("Escalar α inválido", "Debe ser numérico.")
-            return
-        if beta is None:
-            messagebox.showerror("Escalar β inválido", "Debe ser numérico.")
-            return
+        tk.Label(entradas_frame, text="Escalar α:", bg=colores['fondo_principal'], font=fuentes['botones']).grid(row=1, column=0, sticky="w")
+        entry_alpha = tk.Entry(entradas_frame, width=10)
+        entry_alpha.insert(0, "1")
+        entry_alpha.grid(row=1, column=1, sticky="w")
 
-        resultado = operacion_combinada(alpha, A, beta, B)
-        if resultado is None:
-            resultado_var.set("Error durante el cálculo.")
-            return
+        entry_B = entry_beta = None
+        if "Combinada" in modo:
+            tk.Label(entradas_frame, text="Matriz B:", bg=colores['fondo_principal'], font=fuentes['botones']).grid(row=2, column=0, sticky="w")
+            entry_B = tk.Entry(entradas_frame, width=40)
+            entry_B.insert(0, "5,6;7,8")
+            entry_B.grid(row=2, column=1)
 
-        # Formatear salida
-        if not resultado:
-            resultado_var.set("Resultado vacío.")
-        else:
-            resultado_formateado = "\n".join(
-                ["  ".join(f"{num:.2f}" for num in fila) for fila in resultado]
-            )
-            resultado_var.set(f"Resultado:\n{resultado_formateado}")
+            tk.Label(entradas_frame, text="Escalar β:", bg=colores['fondo_principal'], font=fuentes['botones']).grid(row=3, column=0, sticky="w")
+            entry_beta = tk.Entry(entradas_frame, width=10)
+            entry_beta.insert(0, "1")
+            entry_beta.grid(row=3, column=1, sticky="w")
 
-    # 🚀 Botón
-    tk.Button(frame, text="Calcular αA + βB",
-              bg=colores['boton_normal'], fg=colores['texto_boton'],
-              font=fuentes['botones'], relief="flat",
-              activebackground=colores['boton_hover'],
-              cursor="hand2",
-              command=calcular).pack(pady=10)
+        def parsear_matriz(cadena):
+            try:
+                matriz = []
+                filas = cadena.strip().split(';')
+                for fila in filas:
+                    fila_limpia = fila.replace(',', ' ').split()
+                    matriz.append([float(x) for x in fila_limpia])
+                return matriz, None
+            except ValueError:
+                return None, "Error: Valores no válidos en la matriz."
 
-    return frame  # Retornamos el frame si se desea manipular más tarde
+        def calcular():
+            A, errA = parsear_matriz(entry_A.get())
+            if errA:
+                messagebox.showerror("Error matriz A", errA)
+                return
+
+            try:
+                alpha = float(entry_alpha.get())
+            except:
+                messagebox.showerror("Error escalar α", "α debe ser un número.")
+                return
+
+            if entry_B and entry_beta:
+                B, errB = parsear_matriz(entry_B.get())
+                if errB:
+                    messagebox.showerror("Error matriz B", errB)
+                    return
+
+                try:
+                    beta = float(entry_beta.get())
+                except:
+                    messagebox.showerror("Error escalar β", "β debe ser un número.")
+                    return
+
+                if len(A) != len(B) or len(A[0]) != len(B[0]):
+                    messagebox.showerror("Error", "Las matrices deben tener el mismo tamaño.")
+                    return
+
+                resultado = [[round(alpha * a + beta * b, 2) for a, b in zip(fa, fb)] for fa, fb in zip(A, B)]
+            else:
+                resultado = [[round(alpha * val, 2) for val in row] for row in A]
+
+            texto = "\n".join("  ".join(f"{n:.2f}" for n in fila) for fila in resultado)
+            resultado_var.set(f"Resultado:\n{texto}")
+
+        tk.Button(entradas_frame, text="Calcular",
+                  bg=colores['boton_normal'], fg=colores['texto_boton'],
+                  font=fuentes['botones'], relief="flat",
+                  activebackground=colores['boton_hover'],
+                  cursor="hand2", command=calcular).grid(row=5, columnspan=2, pady=10)
+
+    selector.bind("<<ComboboxSelected>>", lambda e: construir_formulario())
+    construir_formulario()
+
+    return frame

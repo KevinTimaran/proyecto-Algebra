@@ -1,11 +1,16 @@
-import tkinter as tk
-from tkinter import Frame, Label, messagebox
-from backend.restarMatrices import restarMatrices
 import os, sys
+import tkinter as tk
+from tkinter import Frame, Label, Entry, Button, messagebox
 
-# === PATH DINÁMICO PARA IMPORTACIONES ===
+# Agrega el path al directorio raíz del proyecto
 current_dir = os.path.dirname(os.path.abspath(__file__))
-root_src_dir = os.path.dirname(current_dir)
+root_src_dir = os.path.dirname(current_dir)  # => .../Proyecto Algebra/src
+
+if root_src_dir not in sys.path:
+    sys.path.insert(0, root_src_dir)
+
+# Ahora sí puedes importar
+from backend.restarMatrices import restarMatrices
 
 def interfaz_resta(parent, colores, fuentes):
     """
