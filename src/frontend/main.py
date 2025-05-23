@@ -5,6 +5,8 @@ from interfaz_inversa import interfaz_inversa
 from interfaz_sumas import interfaz_suma
 from interfaz_vectores import interfaz_vectores
 from interfaz_multiplicacion import interfaz_multiplicacion
+from interfaz_resolucion_sistemas import interfaz_sistemas
+
 
 class CalculadoraAlgebra(Frame):
     def __init__(self, master=None):
