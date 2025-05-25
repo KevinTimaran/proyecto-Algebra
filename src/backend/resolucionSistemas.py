@@ -1,15 +1,9 @@
-# resolucionSistemas.py
-# Módulo unificado con: Método de Cramer, determinante por Sarrus y cofactores (para sistemas 3x3)
 
 import numpy as np
 
 # ===================== Método de Cramer =====================
 
 def resolver_cramer(A, B):
-    """
-    Resuelve el sistema AX = B usando el método de Cramer.
-    Devuelve un diccionario con determinantes, matrices modificadas y solución.
-    """
     A = np.array(A, dtype=float)
     B = np.array(B, dtype=float)
 
@@ -45,7 +39,7 @@ def resolver_cramer(A, B):
 
 def determinante_sarrus(matriz):
     """
-    Calcula el determinante de una matriz 3x3 por el método de Sarrus.
+    Calculamos el determinante de una matriz 3x3 por el método de Sarrus.
     """
     if len(matriz) != 3 or any(len(f) != 3 for f in matriz):
         return "Error: La matriz no es 3x3."
@@ -85,7 +79,7 @@ def matriz_de_cofactores(matriz):
 
     return cofactores.round(4).tolist()
 
-# ===================== Formateo (opcional para GUI) =====================
+# ===================== Formateo =====================
 
 def formatear_matriz(matriz):
     """
