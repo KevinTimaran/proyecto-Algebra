@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import Frame, Label, Entry, Button, messagebox, StringVar, OptionMenu
+from tkinter import messagebox, StringVar, ttk
 import os, sys
 
 # === Asegurar ruta al backend ===
@@ -8,118 +8,143 @@ root_src_dir = os.path.dirname(current_dir)
 if root_src_dir not in sys.path:
     sys.path.append(root_src_dir)
 
-# === Intentar importar lógica ===
+# === Importar funciones del backend ===
 try:
-    from backend.resolucionSistemas import (
-        resolver_cramer,
-        determinante_sarrus,
-        matriz_de_cofactores
-    )
+    from backend.resolucionSistemas import resolver_cramer, determinante_sarrus, matriz_de_cofactores
 except ImportError:
     def resolver_cramer(A, B): return "Error de importación"
     def determinante_sarrus(A): return "Error de importación"
     def matriz_de_cofactores(A): return "Error de importación"
 
-def interfaz_sistemas(parent, colores, fuentes):
-    frame = Frame(parent, bg=colores['fondo_principal'], width=760, height=700)
-    frame.pack(padx=30, pady=30)
-    frame.pack_propagate(False)
+def interfaz_sistemas_general(parent, colores, fuentes):
+    frame = tk.Frame(parent, bg=colores['fondo_principal'])
+    frame.pack(fill="both", expand=True, padx=20, pady=20)
 
-    Label(frame, text="Resolución de Sistemas Lineales",
-          bg=colores['fondo_principal'], fg=colores['titulo'], font=fuentes['titulo']
-    ).pack(pady=(0, 20))
+    tk.Label(frame, text="Resolución de Sistemas Lineales (n x n)",
+             bg=colores['fondo_principal'], fg=colores['titulo'],
+             font=fuentes['titulo']).pack(pady=10)
 
-    entrada_frame = Frame(frame, bg=colores['fondo_principal'])
-    entrada_frame.pack()
+    top_frame = tk.Frame(frame, bg=colores['fondo_principal'])
+    top_frame.pack()
 
-    entries_A = []
-    entries_B = []
+    # Selección de método
+    metodo_var = StringVar(value="Cramer")
+    ttk.Label(top_frame, text="Método:", background=colores['fondo_principal']).pack(side="left", padx=5)
+    metodo_menu = ttk.Combobox(top_frame, textvariable=metodo_var, values=["Cramer", "Sarrus", "Cofactores"], state="readonly", width=15)
+    metodo_menu.pack(side="left", padx=5)
 
-    for i in range(3):
-        fila = []
-        for j in range(3):
-            e = Entry(entrada_frame, width=5)
-            e.grid(row=i, column=j, padx=5, pady=5)
-            fila.append(e)
-        entries_A.append(fila)
+    # Tamaño del sistema
+    tk.Label(top_frame, text="Tamaño n:", bg=colores['fondo_principal']).pack(side="left", padx=5)
+    entry_n = tk.Entry(top_frame, width=4)
+    entry_n.insert(0, "3")
+    entry_n.pack(side="left", padx=5)
 
-        e_b = Entry(entrada_frame, width=5)
-        e_b.grid(row=i, column=4, padx=10)
-        entries_B.append(e_b)
+    # Área para entradas dinámicas
+    entradas_frame = tk.Frame(frame, bg=colores['fondo_principal'])
+    entradas_frame.pack(pady=10)
 
-    # Selector de método
-    metodo_var = StringVar()
-    metodo_var.set("Cramer")
-    opciones_metodos = ["Cramer", "Sarrus", "Cofactores"]
-    menu = OptionMenu(frame, metodo_var, *opciones_metodos)
-    menu.config(bg=colores['boton_normal'], fg=colores['texto_boton'], font=fuentes['botones'])
-    menu.pack(pady=10)
+    resultado_var = tk.StringVar()
+    tk.Label(frame, textvariable=resultado_var, bg=colores['fondo_principal'],
+             fg="#000", font=fuentes['botones'], justify="left").pack(pady=10)
 
-    # Resultados
-    resultado_frame = Frame(frame, bg=colores['fondo_principal'])
-    resultado_frame.pack()
-
-    def calcular():
-        try:
-            A = [[float(e.get()) for e in fila] for fila in entries_A]
-            B = [float(e.get()) for e in entries_B]
-        except ValueError:
-            messagebox.showerror("Entrada inválida", "Todos los campos deben contener números.")
-            return
-
-        for widget in resultado_frame.winfo_children():
+    def construir_formulario():
+        for widget in entradas_frame.winfo_children():
             widget.destroy()
 
-        metodo = metodo_var.get()
+        try:
+            n = int(entry_n.get())
+            if n <= 0:
+                raise ValueError
+        except ValueError:
+            messagebox.showerror("Error", "n debe ser un número entero positivo.")
+            return
 
-        if metodo == "Cramer":
-            resultado = resolver_cramer(A, B)
-            if isinstance(resultado, str):
-                Label(resultado_frame, text=resultado, fg="red", bg=colores['fondo_principal']).pack()
-            else:
-                Label(resultado_frame, text=f"Determinante de A: {resultado['det_A']}", bg=colores['fondo_principal']).pack()
-                for i, x in enumerate(resultado['solucion'], 1):
-                    Label(resultado_frame, text=f"x{i} = {x}", bg=colores['fondo_principal']).pack()
+        tk.Label(entradas_frame, text="Coeficientes de la matriz A:", bg=colores['fondo_principal'], font=fuentes['botones']).grid(row=0, column=0, columnspan=n)
+        entries_A = []
+        for i in range(n):
+            fila = []
+            for j in range(n):
+                e = tk.Entry(entradas_frame, width=5)
+                e.grid(row=i + 1, column=j, padx=2, pady=2)
+                fila.append(e)
+            entries_A.append(fila)
 
-        elif metodo == "Sarrus":
-            if len(A) == 3 and all(len(f) == 3 for f in A):
+        tk.Label(entradas_frame, text="Términos independientes (B):", bg=colores['fondo_principal'], font=fuentes['botones']).grid(row=0, column=n + 1)
+        entries_B = []
+        for i in range(n):
+            e = tk.Entry(entradas_frame, width=5)
+            e.grid(row=i + 1, column=n + 1, padx=5)
+            entries_B.append(e)
+
+        def leer_matriz(entries):
+            try:
+                return [[float(e.get()) for e in fila] for fila in entries], None
+            except ValueError:
+                return None, "Todos los valores en la matriz deben ser numéricos."
+
+        def leer_vector(entries):
+            try:
+                return [float(e.get()) for e in entries], None
+            except ValueError:
+                return None, "Todos los valores en el vector deben ser numéricos."
+
+        def calcular():
+            A, errA = leer_matriz(entries_A)
+            B, errB = leer_vector(entries_B)
+            metodo = metodo_var.get()
+
+            for widget in entradas_frame.winfo_children():
+                widget.update()
+
+            if errA:
+                messagebox.showerror("Error en matriz A", errA)
+                return
+            if errB:
+                messagebox.showerror("Error en vector B", errB)
+                return
+
+            if len(A) != len(A[0]):
+                messagebox.showerror("Error", "La matriz A debe ser cuadrada.")
+                return
+            if len(B) != len(A):
+                messagebox.showerror("Error", "El vector B debe tener la misma cantidad de filas que A.")
+                return
+
+            resultado_var.set("")  # limpiar
+
+            if metodo == "Cramer":
+                resultado = resolver_cramer(A, B)
+                if isinstance(resultado, str):
+                    resultado_var.set(resultado)
+                else:
+                    texto = f"Determinante |A|: {resultado['det_A']}\n"
+                    texto += "\n".join([f"x{i + 1} = {val}" for i, val in enumerate(resultado['solucion'])])
+                    resultado_var.set(texto)
+
+            elif metodo == "Sarrus":
+                if len(A) != 3:
+                    messagebox.showwarning("Método no válido", "Sarrus solo se aplica a sistemas 3x3.")
+                    return
                 det = determinante_sarrus(A)
-                Label(resultado_frame, text=f"Determinante (Sarrus): {det}", bg=colores['fondo_principal']).pack()
-            else:
-                Label(resultado_frame, text="La matriz debe ser 3x3.", fg="red", bg=colores['fondo_principal']).pack()
+                resultado_var.set(f"Determinante por Sarrus: {det}")
 
-        elif metodo == "Cofactores":
-            if len(A) == 3 and all(len(f) == 3 for f in A):
-                cofactores = matriz_de_cofactores(A)
-                Label(resultado_frame, text="Matriz de Cofactores:", bg=colores['fondo_principal']).pack()
-                for fila in cofactores:
-                    Label(resultado_frame, text=str(fila), bg=colores['fondo_principal']).pack()
-            else:
-                Label(resultado_frame, text="La matriz debe ser 3x3.", fg="red", bg=colores['fondo_principal']).pack()
+            elif metodo == "Cofactores":
+                if len(A) != 3:
+                    messagebox.showwarning("Método no válido", "Cofactores solo se aplica a matrices 3x3.")
+                    return
+                cof = matriz_de_cofactores(A)
+                texto = "Matriz de Cofactores:\n" + "\n".join(str(fila) for fila in cof)
+                resultado_var.set(texto)
 
-    Button(frame, text="Calcular", command=calcular,
-           bg=colores['boton_normal'], fg=colores['texto_boton'],
-           activebackground=colores['boton_hover'], relief="flat", font=fuentes['botones']
-    ).pack(pady=15)
+        tk.Button(entradas_frame, text="Calcular",
+                  bg=colores['boton_normal'], fg=colores['texto_boton'],
+                  font=fuentes['botones'], relief="flat",
+                  activebackground=colores['boton_hover'],
+                  cursor="hand2", command=calcular).grid(row=n + 2, columnspan=n + 2, pady=10)
+
+    # Reconstruir formulario al cambiar método o tamaño
+    metodo_menu.bind("<<ComboboxSelected>>", lambda e: construir_formulario())
+    entry_n.bind("<Return>", lambda e: construir_formulario())
+    construir_formulario()
 
     return frame
-
-# === Prueba local ===
-if __name__ == '__main__':
-    root = tk.Tk()
-    root.geometry("800x720")
-    root.title("Sistema de Ecuaciones - Multimétodo")
-    colores = {
-        'fondo_principal': "#f8f9fa",
-        'boton_normal': "#495057",
-        'boton_hover': "#343a40",
-        'texto_boton': "#f8f9fa",
-        'titulo': "#d62828"
-    }
-    fuentes = {
-        'titulo': ("Segoe UI", 16, "bold"),
-        'subtitulo': ("Segoe UI", 12),
-        'botones': ("Segoe UI", 11)
-    }
-    interfaz_sistemas(root, colores, fuentes)
-    root.mainloop()
