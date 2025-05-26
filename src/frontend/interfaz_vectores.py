@@ -35,7 +35,8 @@ def interfaz_vectores(parent, colores, fuentes):
     # Selector de operaciones
     opciones = [
         "Suma", "Resta", "Multiplicación por escalar",
-        "Producto punto", "Producto cruz", "Magnitud", "Ángulo entre vectores"
+        "Producto punto", "Producto cruz", "Magnitud", "Ángulo entre vectores",
+        "Componentes rectangulares"
     ]
     
     # Frame para controles
@@ -85,6 +86,8 @@ def interfaz_vectores(parent, colores, fuentes):
             setup_magnitud()
         elif operacion == "Ángulo entre vectores":
             setup_angulo()
+        elif operacion == "Componentes rectangulares":
+            setup_componentes_rectangulares()
 
     def setup_suma():
         Label(operacion_frame, 
@@ -420,10 +423,59 @@ def interfaz_vectores(parent, colores, fuentes):
     # Configurar eventos
     cmb_opciones.bind("<<ComboboxSelected>>", lambda e: mostrar_operacion(cmb_opciones.get()))
     
+    def setup_componentes_rectangulares():
+            
+        Label(operacion_frame, 
+            text="Componentes Rectangulares",
+            bg=operacion_frame['bg'],
+            font=fuentes['subtitulo']).pack(pady=5)
+
+        frame_inputs = Frame(operacion_frame, bg=operacion_frame['bg'])
+        frame_inputs.pack(pady=10)
+
+        # Magnitud
+        Label(frame_inputs, 
+            text="Magnitud:",
+            bg=frame_inputs['bg'],
+            font=fuentes['botones']).grid(row=0, column=0, padx=5, sticky="e")
+        entry_mag = Entry(frame_inputs, width=30)
+        entry_mag.grid(row=0, column=1, padx=5)
+        entry_mag.insert(0, "10")
+
+        # Ángulo
+        Label(frame_inputs, 
+            text="Ángulo (°):",
+            bg=frame_inputs['bg'],
+            font=fuentes['botones']).grid(row=1, column=0, padx=5, sticky="e")
+        entry_ang = Entry(frame_inputs, width=30)
+        entry_ang.grid(row=1, column=1, padx=5)
+        entry_ang.insert(0, "45")
+
+        # Botón calcular
+        Button(operacion_frame,
+            text="Calcular Componentes",
+            command=lambda: calcular_componentes(entry_mag.get(), entry_ang.get()),
+            bg=colores['boton_normal'],
+            fg=colores['texto_boton'],
+            font=fuentes['botones']).pack(pady=10)
+
+    def calcular_componentes(mag_str, ang_str):
+        from backend.vectores import componentes_rectangulares
+        try:
+            mag = float(mag_str)
+            ang = float(ang_str)
+            resultado = componentes_rectangulares(mag, ang)
+            resultado_var.set(f"Componentes rectangulares: {resultado}")
+        except ValueError:
+            resultado_var.set("Error: Ingrese números válidos para magnitud y ángulo")
+
+
+
     # Mostrar operación inicial
     mostrar_operacion(cmb_opciones.get())
 
     return frame
+    
 
 # Bloque de prueba
 if __name__ == "__main__":

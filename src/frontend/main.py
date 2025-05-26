@@ -1,4 +1,4 @@
-from tkinter import Label, Button, Frame, Tk, font
+from tkinter import Label, Button, Frame, Tk
 from interfaz_operaciones_combinadas import interfaz_operaciones_combinadas
 from interfaz_resta import interfaz_resta
 from interfaz_inversa import interfaz_inversa
