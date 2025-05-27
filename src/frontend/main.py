@@ -18,7 +18,7 @@ class CalculadoraAlgebra(Frame):
         
     def configurar_ventana(self):
         self.master.title("Calculadora de Álgebra Lineal")
-        self.master.geometry("1500x800")
+        self.master.geometry("1500x700")
         self.master.minsize(800, 600)
         self.master.resizable(False, False)
         self.master.configure(bg='white')
