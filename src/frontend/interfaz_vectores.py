@@ -100,7 +100,7 @@ def interfaz_vectores(parent, colores, fuentes):
         
         # Vector A
         Label(frame_inputs, 
-              text="Vector A (ej: 1,2,3):",
+              text="Vector A :",
               bg=frame_inputs['bg'],
               font=fuentes['botones']).grid(row=0, column=0, padx=5, sticky="e")
         entry_a = Entry(frame_inputs, width=30)
@@ -109,7 +109,7 @@ def interfaz_vectores(parent, colores, fuentes):
         
         # Vector B
         Label(frame_inputs, 
-              text="Vector B (ej: 4,5,6):",
+              text="Vector B :",
               bg=frame_inputs['bg'],
               font=fuentes['botones']).grid(row=1, column=0, padx=5, sticky="e")
         entry_b = Entry(frame_inputs, width=30)
@@ -150,7 +150,7 @@ def interfaz_vectores(parent, colores, fuentes):
         
         # Vector A
         Label(frame_inputs, 
-              text="Vector A (ej: 1,2,3):",
+              text="Vector A :",
               bg=frame_inputs['bg'],
               font=fuentes['botones']).grid(row=0, column=0, padx=5, sticky="e")
         entry_a = Entry(frame_inputs, width=30)
@@ -159,7 +159,7 @@ def interfaz_vectores(parent, colores, fuentes):
         
         # Vector B
         Label(frame_inputs, 
-              text="Vector B (ej: 4,5,6):",
+              text="Vector B :",
               bg=frame_inputs['bg'],
               font=fuentes['botones']).grid(row=1, column=0, padx=5, sticky="e")
         entry_b = Entry(frame_inputs, width=30)
@@ -200,7 +200,7 @@ def interfaz_vectores(parent, colores, fuentes):
         
         # Vector
         Label(frame_inputs, 
-              text="Vector (ej: 1,2,3):",
+              text="Vector:",
               bg=frame_inputs['bg'],
               font=fuentes['botones']).grid(row=0, column=0, padx=5, sticky="e")
         entry_vec = Entry(frame_inputs, width=30)
@@ -246,7 +246,7 @@ def interfaz_vectores(parent, colores, fuentes):
         
         # Vector A
         Label(frame_inputs, 
-              text="Vector A (ej: 1,2,3):",
+              text="Vector A :",
               bg=frame_inputs['bg'],
               font=fuentes['botones']).grid(row=0, column=0, padx=5, sticky="e")
         entry_a = Entry(frame_inputs, width=30)
@@ -255,7 +255,7 @@ def interfaz_vectores(parent, colores, fuentes):
         
         # Vector B
         Label(frame_inputs, 
-              text="Vector B (ej: 4,5,6):",
+              text="Vector B :",
               bg=frame_inputs['bg'],
               font=fuentes['botones']).grid(row=1, column=0, padx=5, sticky="e")
         entry_b = Entry(frame_inputs, width=30)
@@ -296,7 +296,7 @@ def interfaz_vectores(parent, colores, fuentes):
         
         # Vector A
         Label(frame_inputs, 
-              text="Vector A (ej: 1,2,3):",
+              text="Vector A :",
               bg=frame_inputs['bg'],
               font=fuentes['botones']).grid(row=0, column=0, padx=5, sticky="e")
         entry_a = Entry(frame_inputs, width=30)
@@ -305,7 +305,7 @@ def interfaz_vectores(parent, colores, fuentes):
         
         # Vector B
         Label(frame_inputs, 
-              text="Vector B (ej: 4,5,6):",
+              text="Vector B :",
               bg=frame_inputs['bg'],
               font=fuentes['botones']).grid(row=1, column=0, padx=5, sticky="e")
         entry_b = Entry(frame_inputs, width=30)
@@ -346,7 +346,7 @@ def interfaz_vectores(parent, colores, fuentes):
         
         # Vector
         Label(frame_inputs, 
-              text="Vector (ej: 1,2,3):",
+              text="Vector :",
               bg=frame_inputs['bg'],
               font=fuentes['botones']).grid(row=0, column=0, padx=5, sticky="e")
         entry_vec = Entry(frame_inputs, width=30)
@@ -381,7 +381,7 @@ def interfaz_vectores(parent, colores, fuentes):
         
         # Vector A
         Label(frame_inputs, 
-              text="Vector A (ej: 1,0,0):",
+              text="Vector A :",
               bg=frame_inputs['bg'],
               font=fuentes['botones']).grid(row=0, column=0, padx=5, sticky="e")
         entry_a = Entry(frame_inputs, width=30)
@@ -390,7 +390,7 @@ def interfaz_vectores(parent, colores, fuentes):
         
         # Vector B
         Label(frame_inputs, 
-              text="Vector B (ej: 0,1,0):",
+              text="Vector B:",
               bg=frame_inputs['bg'],
               font=fuentes['botones']).grid(row=1, column=0, padx=5, sticky="e")
         entry_b = Entry(frame_inputs, width=30)
