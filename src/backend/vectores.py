@@ -87,7 +87,8 @@ def producto_cruz(A, B):
         return "Error: El producto cruz solo está definido para vectores 3D."
 
     resultado = np.cross(A, B)
-    return [round(x, 2) for x in resultado]
+    return [round(float(x), 2) for x in resultado]  # ✅ Conversión explícita a float
+
 
 def componentes_rectangulares(magnitud, angulo_grados):
 
